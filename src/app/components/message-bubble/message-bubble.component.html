@@ -1,0 +1,54 @@
+<div
+  [ngClass]="{
+    'flex gap-3 p-4 w-full transition-colors': true,
+    'bg-chat-user hover:bg-chat-hover': isUser,
+    'bg-chat-ai hover:bg-chat-hover': !isUser
+  }"
+>
+  <div class="flex-shrink-0 mt-1">
+    <div
+      [ngClass]="{
+        'flex items-center justify-center w-8 h-8 rounded-full': true,
+        'bg-primary/10': isUser,
+        'bg-primary/20': !isUser
+      }"
+    >
+      <app-message-icon
+        [type]="message.type"
+        class="h-5 w-5 text-primary"
+      ></app-message-icon>
+    </div>
+  </div>
+
+  <div class="flex-1 space-y-2">
+    <div class="flex items-center gap-2">
+      <span class="font-medium">{{ isUser ? "You" : "AI Assistant" }}</span>
+      <span class="text-xs text-muted-foreground">{{
+        formatTime(message.timestamp)
+      }}</span>
+    </div>
+
+    <div class="text-sm whitespace-pre-wrap">
+      {{ message.content }}
+    </div>
+
+    <div
+      *ngIf="message.files?.length ?? 0 > 0"
+      class="flex flex-wrap gap-2 mt-2"
+    >
+      <div
+        *ngFor="let file of message.files"
+        class="flex items-center gap-2 p-2 rounded-md bg-secondary/50"
+      >
+        <app-file-icon
+          [type]="file.type"
+          class="h-4 w-4 text-muted-foreground"
+        ></app-file-icon>
+        <span class="text-xs truncate max-w-[150px]">{{ file.name }}</span>
+        <span class="text-xs text-muted-foreground"
+          >{{ file.size / 1024 | number : "1.0-0" }} KB</span
+        >
+      </div>
+    </div>
+  </div>
+</div>

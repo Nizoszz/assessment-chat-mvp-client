@@ -1,0 +1,7 @@
+<div class="w-full">
+  <ng-container *ngFor="let message of messages">
+    <app-message-bubble [message]="message"></app-message-bubble>
+  </ng-container>
+
+  <div #endOfMessages></div>
+</div>

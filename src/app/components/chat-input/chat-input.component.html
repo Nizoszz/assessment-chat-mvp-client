@@ -1,0 +1,37 @@
+<form
+  (submit)="onSubmit($event)"
+  class="relative bg-background border-t border-border"
+>
+  <div class="container max-w-4xl mx-auto py-4">
+    <div class="flex items-start gap-2 p-2 rounded-lg border bg-background">
+      <app-file-upload-button
+        [selectedFiles]="selectedFiles"
+        (filesSelect)="onFilesSelected($event)"
+        class="pt-2"
+      ></app-file-upload-button>
+
+      <textarea
+        [(ngModel)]="message"
+        (keydown)="onKeyDown($event)"
+        name="message"
+        placeholder="Type a message..."
+        class="min-h-[40px] w-full resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-2"
+      ></textarea>
+
+      <button
+        [disabled]="
+          isProcessing || (!message.trim() && selectedFiles.length === 0)
+        "
+        [ngClass]="{
+          'btn-default': message.trim() || selectedFiles.length > 0,
+          'btn-ghost': !(message.trim() || selectedFiles.length > 0)
+        }"
+        type="submit"
+        class="h-9 w-9 rounded-full mt-1 flex-shrink-0"
+      >
+        <i class="icon-send"></i>
+        <span class="sr-only">Send</span>
+      </button>
+    </div>
+  </div>
+</form>
