@@ -1,0 +1,79 @@
+<div class="flex flex-col h-screen">
+  <header class="bg-background border-b border-border py-4 px-6">
+    <div class="container max-w-4xl mx-auto flex items-center justify-between">
+      <h1 class="text-xl font-bold flex items-center gap-2">
+        <svg
+          class="h-5 w-5 text-primary"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M12 3v1m0 16v1m8.66-11.66l-.71.71M4.05 19.95l-.71-.71M21 12h-1M3 12H2m16.66 8.66l-.71-.71M4.05 4.05l-.71.71"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        Curriculum AI Assistant
+      </h1>
+    </div>
+  </header>
+
+  <main class="flex-1 overflow-y-auto">
+    <div class="container max-w-4xl mx-auto">
+      <div class="space-y-[1px]">
+        <ng-container *ngFor="let message of messages">
+          <app-message-bubble [message]="message"></app-message-bubble>
+        </ng-container>
+
+        <div *ngIf="isProcessing" class="flex gap-3 p-4 w-full bg-chat-ai">
+          <div class="flex-shrink-0 mt-1">
+            <div
+              class="flex items-center justify-center w-8 h-8 rounded-full bg-primary/20"
+            >
+              <svg
+                class="h-5 w-5 text-primary animate-pulse"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12 3v1m0 16v1m8.66-11.66l-.71.71M4.05 19.95l-.71-.71M21 12h-1M3 12H2m16.66 8.66l-.71-.71M4.05 4.05l-.71.71"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2">
+              <span class="font-medium">AI Assistant</span>
+            </div>
+            <div class="flex gap-1 mt-2">
+              <div
+                class="w-2 h-2 rounded-full bg-primary/60 animate-pulse"
+              ></div>
+              <div
+                class="w-2 h-2 rounded-full bg-primary/60 animate-pulse"
+                style="animation-delay: 200ms"
+              ></div>
+              <div
+                class="w-2 h-2 rounded-full bg-primary/60 animate-pulse"
+                style="animation-delay: 400ms"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <div #messagesEndRef></div>
+      </div>
+    </div>
+  </main>
+
+  <app-chat-input
+    [isProcessing]="isProcessing"
+    (sendMessage)="onSendMessage($event.message, $event.files)"
+  ></app-chat-input>
+</div>
