@@ -4,6 +4,7 @@
     'bg-chat-user hover:bg-chat-hover': isUser,
     'bg-chat-ai hover:bg-chat-hover': !isUser
   }"
+  class="mt-4"
 >
   <div class="flex-shrink-0 mt-1">
     <div
@@ -22,7 +23,7 @@
 
   <div class="flex-1 space-y-2">
     <div class="flex items-center gap-2">
-      <span class="font-medium">{{ isUser ? "You" : "AI Assistant" }}</span>
+      <span class="font-medium">{{ isUser ? "You" : "MatchWise Bot" }}</span>
       <span class="text-xs text-muted-foreground">{{
         formatTime(message.timestamp)
       }}</span>
@@ -33,20 +34,19 @@
     </div>
 
     <div
-      *ngIf="message.files?.length ?? 0 > 0"
+      *ngIf="message.file"
       class="flex flex-wrap gap-2 mt-2"
     >
       <div
-        *ngFor="let file of message.files"
         class="flex items-center gap-2 p-2 rounded-md bg-secondary/50"
       >
         <app-file-icon
-          [type]="file.type"
+          [type]="message.file.type"
           class="h-4 w-4 text-muted-foreground"
         ></app-file-icon>
-        <span class="text-xs truncate max-w-[150px]">{{ file.name }}</span>
+        <span class="text-xs truncate max-w-[150px]">{{ message.file.name }}</span>
         <span class="text-xs text-muted-foreground"
-          >{{ file.size / 1024 | number : "1.0-0" }} KB</span
+          >{{ message.file.size / 1024 | number : "1.0-0" }} KB</span
         >
       </div>
     </div>

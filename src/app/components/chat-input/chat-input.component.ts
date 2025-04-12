@@ -3,7 +3,6 @@ import { FileUploadButtonComponent } from '../file-upload-button/file-upload-but
 import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { FileData } from '../../chat/chat.component';
-// import { FileData } from '../models/file-data.model';
 
 @Component({
   selector: 'app-chat-input',
@@ -12,28 +11,27 @@ import { FileData } from '../../chat/chat.component';
   imports: [FileUploadButtonComponent, FormsModule, NgClass],
 })
 export class ChatInputComponent {
-  // Assuming FileData is a model, change any to filedata
   @Output() sendMessage = new EventEmitter<{
     message: string;
-    files: FileData[];
+    file: FileData | null;
   }>();
   message: string = '';
-  selectedFiles: FileData[] = [];
+  selectedFile: FileData | null = null;
   @Input() isProcessing = false;
 
   onSubmit(event: Event): void {
     event.preventDefault();
 
     const trimmedMessage = this.message.trim();
-    if (!trimmedMessage && this.selectedFiles.length === 0) return;
+    if (!trimmedMessage && !this.selectedFile) return;
 
     this.sendMessage.emit({
       message: trimmedMessage,
-      files: this.selectedFiles,
+      file: this.selectedFile,
     });
 
     this.message = '';
-    this.selectedFiles = [];
+    this.selectedFile = null;
   }
 
   onKeyDown(event: KeyboardEvent): void {
@@ -43,7 +41,7 @@ export class ChatInputComponent {
     }
   }
 
-  onFilesSelected(files: FileData[]): void {
-    this.selectedFiles = files;
+  onFileSelected(file: FileData | null): void {
+    this.selectedFile = file;
   }
 }
