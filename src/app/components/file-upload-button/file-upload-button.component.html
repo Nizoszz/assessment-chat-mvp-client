@@ -1,16 +1,15 @@
-<div class="flex flex-col">
+<div class="flex gap-4">
   <input
     #fileInput
     type="file"
     class="hidden"
     (change)="onFileChange($event)"
     accept=".pdf,.txt"
-    multiple
   />
 
   <button
     type="button"
-    class="h-9 w-9 rounded-full btn-icon"
+    class="h-9 w-9 rounded-full btn-icon flex justify-center items-center hover:bg-secondary border-[2px] border-border"
     (click)="triggerFilePicker()"
   >
     <svg
@@ -34,37 +33,32 @@
   </button>
 
   <div
-    *ngIf="selectedFiles.length > 0"
-    class="flex flex-wrap items-center gap-2 mt-2"
+    *ngIf="selectedFile"
+    class="flex items-center gap-3 py-1 px-2 rounded-md bg-secondary text-xs"
   >
-    <div
-      *ngFor="let file of selectedFiles; let i = index"
-      class="flex items-center gap-1 py-1 px-2 rounded-md bg-secondary text-xs"
+    <app-file-icon [type]="selectedFile.type" class="h-3 w-3"></app-file-icon>
+    <span class="truncate max-w-[100px] text-center">{{ selectedFile.name }}</span>
+    <button
+      type="button"
+      (click)="removeFile()"
+      class="ml-1 text-muted-foreground hover:text-foreground"
     >
-      <app-file-icon [type]="file.type" class="h-3 w-3"></app-file-icon>
-      <span class="truncate max-w-[100px]">{{ file.name }}</span>
-      <button
-        type="button"
-        (click)="removeFile(i)"
-        class="ml-1 text-muted-foreground hover:text-foreground"
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="h-3 w-3"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="h-3 w-3"
-        >
-          <path d="M18 6 6 18" />
-          <path d="m6 6 12 12" />
-        </svg>
-        <span class="sr-only">Remove</span>
-      </button>
-    </div>
+        <path d="M18 6 6 18" />
+        <path d="m6 6 12 12" />
+      </svg>
+      <span class="sr-only">Remove</span>
+    </button>
   </div>
 </div>

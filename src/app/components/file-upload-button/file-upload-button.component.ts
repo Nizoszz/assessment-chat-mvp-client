@@ -6,10 +6,10 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-// import { any } from '../types/message-types';
 import { ToastrService } from 'ngx-toastr';
 import { FileIconComponent } from '../file-icon/file-icon.component';
 import { CommonModule } from '@angular/common';
+import { FileData } from '../../chat/chat.component';
 @Component({
   standalone: true,
   selector: 'app-file-upload-button',
@@ -18,50 +18,37 @@ import { CommonModule } from '@angular/common';
   imports: [FileIconComponent, CommonModule],
 })
 export class FileUploadButtonComponent {
-  @Input() selectedFiles: any[] = [];
-  @Output() filesSelect = new EventEmitter<any[]>();
+  @Input() selectedFile: FileData | null = null;
+  @Output() fileSelect = new EventEmitter<FileData | null>();
   @ViewChild('fileInput') fileInputRef!: ElementRef<HTMLInputElement>;
 
   constructor(private toastr: ToastrService) {}
 
   onFileChange(event: Event): void {
     const target = event.target as HTMLInputElement;
-    const fileList = target.files;
-    if (!fileList) return;
+    const file = target.files?.[0];
+    if (!file) return;
 
-    const newFiles: any[] = [];
-    let hasInvalidFile = false;
-
-    Array.from(fileList).forEach((file) => {
-      if (file.type === 'application/pdf' || file.type === 'text/plain') {
-        const fileType = file.type === 'application/pdf' ? 'pdf' : 'txt';
-        newFiles.push({
-          name: file.name,
-          type: fileType,
-          size: file.size,
-          url: URL.createObjectURL(file),
-        });
-      } else {
-        hasInvalidFile = true;
-      }
-    });
-
-    if (hasInvalidFile) {
+    if (file.type === 'application/pdf' || file.type === 'text/plain') {
+      const fileType = file.type === 'application/pdf' ? 'pdf' : 'txt';
+      const fileData: FileData = {
+        name: file.name,
+        type: fileType,
+        size: file.size,
+        url: URL.createObjectURL(file),
+        file: file,
+      };
+      this.fileSelect.emit(fileData);
+    } else {
       this.toastr.error('Only PDF and TXT files are supported');
     }
-
-    if (newFiles.length > 0) {
-      this.filesSelect.emit([...this.selectedFiles, ...newFiles]);
-    }
-
     if (this.fileInputRef) {
       this.fileInputRef.nativeElement.value = '';
     }
   }
 
-  removeFile(index: number): void {
-    const updatedFiles = this.selectedFiles.filter((_, i) => i !== index);
-    this.filesSelect.emit(updatedFiles);
+  removeFile(): void {
+    this.fileSelect.emit(null);
   }
 
   triggerFilePicker(): void {
