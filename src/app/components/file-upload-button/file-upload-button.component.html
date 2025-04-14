@@ -4,7 +4,7 @@
     type="file"
     class="hidden"
     (change)="onFileChange($event)"
-    accept=".pdf,.txt"
+    accept=".pdf"
   />
 
   <button
@@ -37,7 +37,9 @@
     class="flex items-center gap-3 py-1 px-2 rounded-md bg-secondary text-xs"
   >
     <app-file-icon [type]="selectedFile.type" class="h-3 w-3"></app-file-icon>
-    <span class="truncate max-w-[100px] text-center">{{ selectedFile.name }}</span>
+    <span class="truncate max-w-[100px] text-center">{{
+      selectedFile.name
+    }}</span>
     <button
       type="button"
       (click)="removeFile()"

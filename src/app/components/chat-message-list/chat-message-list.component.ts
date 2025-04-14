@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { MessageBubbleComponent } from '../message-bubble/message-bubble.component';
 import { CommonModule } from '@angular/common';
-// import { Message } from '../models/message.model';
+import { Message } from '../../chat/chat.component';
 
 @Component({
   selector: 'app-chat-message-list',
@@ -16,8 +16,8 @@ import { CommonModule } from '@angular/common';
   imports: [MessageBubbleComponent, CommonModule],
 })
 export class ChatMessageListComponent implements AfterViewChecked {
-  // message: any; // replace 'any' with your message model
-  @Input() messages: any[] = [];
+
+  @Input() messages: Message[] = [];
   @ViewChild('endOfMessages') endOfMessages!: ElementRef;
 
   ngAfterViewChecked(): void {

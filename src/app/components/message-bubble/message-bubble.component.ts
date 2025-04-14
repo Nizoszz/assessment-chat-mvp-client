@@ -11,7 +11,7 @@ import { MessageIconComponent } from "../message-icon/message-icon.component";
   imports: [FileIconComponent, CommonModule, MessageIconComponent],
 })
 export class MessageBubbleComponent {
-  @Input() message!: Message; // replace 'any' to message model;
+  @Input() message!: Message;
 
   get isUser(): boolean {
     return this.message.type === 'user';

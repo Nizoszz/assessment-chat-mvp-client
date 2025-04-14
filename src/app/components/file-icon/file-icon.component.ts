@@ -8,6 +8,6 @@ import { Component, Input } from '@angular/core';
   imports: [CommonModule],
 })
 export class FileIconComponent {
-  @Input() type: 'pdf' | 'txt' | null = null;
+  @Input() type: 'pdf'| null = null;
   @Input() className: string = 'h-4 w-4';
 }

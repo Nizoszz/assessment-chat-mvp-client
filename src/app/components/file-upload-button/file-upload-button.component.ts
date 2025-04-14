@@ -29,18 +29,17 @@ export class FileUploadButtonComponent {
     const file = target.files?.[0];
     if (!file) return;
 
-    if (file.type === 'application/pdf' || file.type === 'text/plain') {
-      const fileType = file.type === 'application/pdf' ? 'pdf' : 'txt';
+    if (file.type === 'application/pdf') {
       const fileData: FileData = {
         name: file.name,
-        type: fileType,
+        type: 'pdf',
         size: file.size,
         url: URL.createObjectURL(file),
         file: file,
       };
       this.fileSelect.emit(fileData);
     } else {
-      this.toastr.error('Only PDF and TXT files are supported');
+      this.toastr.error('Only PDF files are supported');
     }
     if (this.fileInputRef) {
       this.fileInputRef.nativeElement.value = '';
