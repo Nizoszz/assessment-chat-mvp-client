@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { formatDistanceToNow } from 'date-fns';
-import { Message } from '../../chat/chat.component';
 import { FileIconComponent } from '../file-icon/file-icon.component';
 import { CommonModule } from '@angular/common';
 import { MessageIconComponent } from "../message-icon/message-icon.component";
+import { Message } from '../../chat/chat.model';
 @Component({
   selector: 'app-message-bubble',
   templateUrl: './message-bubble.component.html',

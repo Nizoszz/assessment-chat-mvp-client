@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FileUploadButtonComponent } from '../file-upload-button/file-upload-button.component';
 import { FormsModule } from '@angular/forms';
 import { NgClass } from '@angular/common';
-import { FileData } from '../../chat/chat.component';
+import { FileData } from '../../chat/chat.model';
 
 @Component({
   selector: 'app-chat-input',

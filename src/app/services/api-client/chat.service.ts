@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../enviroments/enviroment';
-import { FileData } from '../../chat/chat.component';
 import { Observable } from 'rxjs';
+import { FileData } from '../../chat/chat.model';
 
 @Injectable({
   providedIn: 'root',

@@ -30,21 +30,25 @@
     </div>
 
     <div class="text-sm whitespace-pre-wrap">
-      {{ message.content }}
+      <div
+        *ngIf="!isUser"
+        [innerHTML]="message.content"
+        class="flex flex-col gap-1"
+      ></div>
+      <div *ngIf="isUser">
+        <p class="text-sm">{{ message.content }}</p>
+      </div>
     </div>
 
-    <div
-      *ngIf="message.file"
-      class="flex flex-wrap gap-2 mt-2"
-    >
-      <div
-        class="flex items-center gap-2 p-2 rounded-md bg-secondary/50"
-      >
+    <div *ngIf="message.file" class="flex flex-wrap gap-2 mt-2">
+      <div class="flex items-center gap-2 p-2 rounded-md bg-secondary/50">
         <app-file-icon
           [type]="message.file.type"
           class="h-4 w-4 text-muted-foreground"
         ></app-file-icon>
-        <span class="text-xs truncate max-w-[150px]">{{ message.file.name }}</span>
+        <span class="text-xs truncate max-w-[150px]">{{
+          message.file.name
+        }}</span>
         <span class="text-xs text-muted-foreground"
           >{{ message.file.size / 1024 | number : "1.0-0" }} KB</span
         >

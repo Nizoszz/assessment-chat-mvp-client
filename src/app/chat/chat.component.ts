@@ -4,26 +4,8 @@ import { ChatInputComponent } from '../components/chat-input/chat-input.componen
 import { MessageBubbleComponent } from '../components/message-bubble/message-bubble.component';
 import { CommonModule } from '@angular/common';
 import { ChatService } from '../services/api-client/chat.service';
-
-export interface FileData {
-  name: string;
-  type: 'pdf' | null;
-  size: number;
-  url?: string;
-  file: File;
-}
-
-export interface Message {
-  type: 'user' | 'ai';
-  content: string;
-  timestamp: Date;
-  file?: FileData | null;
-}
-
-export interface Payload {
-  resume: FileData | null;
-  jobText: string | null;
-}
+import { AnalyseResultResponseDto } from '../services/api-client/chat.models';
+import { FileData, Message, Payload } from './chat.model';
 
 @Component({
   selector: 'app-chat',
@@ -74,9 +56,10 @@ Vamos começar?`,
   }
 
   onSendMessage(content: string, file: FileData | null) {
+    const contentSanitize = content.replace(/\n\s*\n/g, '\n');
     const userMessage: Message = {
       type: 'user',
-      content,
+      content:contentSanitize,
       timestamp: new Date(),
       file: file ?? null,
     };
@@ -90,7 +73,7 @@ Vamos começar?`,
 
     setTimeout(() => {
       const hasResume = file && file.type === 'pdf';
-      const isJobDescription = content && content.length > 30;
+      const isJobDescription = content;
 
       const bothPresentNow = hasResume && isJobDescription;
       if (bothPresentNow) {
@@ -114,7 +97,7 @@ Vamos começar?`,
       this.payload.resume = file;
     }
 
-    if (!file && content && content.length > 30) {
+    if (content) {
       this.jobDescriptionText = content;
       this.payload.jobText = content;
     }
@@ -136,40 +119,95 @@ Vamos começar?`,
     if (!this.resumeFile || !this.jobDescriptionText) {
       return `Olá! Sou o assistente MatchWise. Para continuar com a análise, por favor envie um currículo válido (PDF) e a descrição da vaga que deseja avaliar.`;
     }
-
     return `✅ Recebi o currículo e a descrição da vaga. Iniciando a análise...`;
   }
 
   private processAnalysis() {
-    this.chatService
-      .analyse({
-        resume: this.resumeFile!,
-        jobText: this.jobDescriptionText!,
-      })
-      .subscribe((response: AnalyseResultResponseDto) => {
-        const responseText = this.formatAnalysis(response);
-        this.pushAiMessage(responseText);
-        this.isProcessing = false;
-        this.scrollToBottom();
-        this.clearPayload();
-      });
+    if (this.resumeFile && this.jobDescriptionText) {
+      this.chatService
+        .analyse({
+          resume: this.resumeFile!,
+          jobText: this.jobDescriptionText!,
+        })
+        .subscribe((response: AnalyseResultResponseDto) => {
+          const responseText = this.formatAnalysis(response);
+          for (const msg of responseText) {
+            this.pushAiMessage(msg);
+          }
+          this.isProcessing = false;
+          this.scrollToBottom();
+          this.clearPayload();
+        });
+    }
   }
 
-  private formatAnalysis(response: AnalyseResultResponseDto): string {
-    return `
-📊 Análise de currículo concluída!
-🔢 Score de compatibilidade: ${response.matchScore}%
-📌 Classificação: ${response.classification}
-✅ Pontos fortes:
-${response.strongPoints.map((p, i) => `  ${i + 1}. ${p}`).join('\n')}
-⚠️ Pontos a melhorar:
-${response.pointsToImprove
-  .map((p, i) => `  ${i + 1}. ${p.description} \n → ${p.studyRecommendation}`)
-  .join('\n')}
-📝 Sugestões para o currículo:
-${response.resumeSuggestions.map((s, i) => `  ${i + 1}. ${s}`).join('\n')}
-📅 Análise realizada em: ${response.createdAt}
-`.trim();
+  private formatAnalysis(
+    response: AnalyseResultResponseDto
+  ): string[] | string {
+    if (!response) {
+      return 'Desculpe, não consegui processar a análise. Por favor, tente novamente.';
+    }
+    const userFeedback = `
+    <h2 class="text-xl font-bold">📊 Análise de currículo concluída!</h2>
+    <h3 class="text-base font-semibold">🔢 Score de compatibilidade: ${
+      response.matchScore
+    }%</h3>
+    <div class="flex flex-col">
+      <h3 class="text-base font-semibold">✅ Pontos fortes:</h3>
+      <ul class="flex flex-col gap-1 ml-4 list-disc">${response.strongPoints
+        .map((p) => `<li class="ml-4 text-sm">${p}</li>`)
+        .join('')}
+      </ul>
+    </div>
+    <div class="flex flex-col">
+      <h3 class="text-base font-semibold">⚠️ Pontos a melhorar:</h3>
+      <ul class="flex flex-col gap-2 ml-4 list-disc">${response.pointsToImprove
+        .map(
+          (p) =>
+            `<li class="ml-4 text-sm">${p.description.trim()}:<ul class="list-disc list-inside flex flex-col gap-2 ml-0"><li class="flex gap-1 text-sm">${p.studyRecommendation
+              .trim()
+              .replace(/\s?\(https?:\/\/[^\s)]+\/?\)/, '')}</li></ul></li>`
+        )
+        .join('')}
+      </ul>
+    <div class="flex flex-col">
+      <h3 class="text-base font-semibold">📝 Sugestões para o currículo:</h3>
+      <ul class="flex flex-col gap-2 ml-4 list-disc">
+        ${response.resumeSuggestions
+          .map((s) => `<li class="ml-4 text-sm">${s}</li>`)
+          .join('')}
+      </ul>
+    </div>
+    <p>📅 <strong>Análise realizada em:</strong> ${response.createdAt}</p>
+    `.trim();
+    const recruiterView = `
+      <h2 class="text-xl font-bold">👀 Visão do Recrutador</h2>
+      <div class="flex flex-col gap-1">
+        <h3 class="text-base font-semibold">✅ Alinhamento</h3>
+        <p class="ml-1 text-sm">${response.recruiterView.alignmentView
+          .replace(/[\*\-]/g, '')
+          .replace(/\n+/g, '\n')
+          .replace(/\+\s*'\\n'\s*/, '')
+          .trim()}</p>
+      </div>
+      <div class="flex flex-col gap-1">
+        <h3 class="text-base font-semibold">❌ Desalinhamento</h3>
+        <p class="ml-1 text-sm">${response.recruiterView.misalignmentView
+          .replace(/[\*\-]/g, '')
+          .replace(/\n+/g, '\n')
+          .replace(/\+\s*'\\n'\s*/, '')
+          .trim()}</p>
+      </div>
+      <div class="flex flex-col gap-1">
+        <h3 class="text-base font-semibold">⚠️ Pontos de Atenção</h3>
+        <p class="ml-1 text-sm">${response.recruiterView.attentionView
+          .replace(/[\*\-]/g, '')
+          .replace(/\n+/g, '\n')
+          .replace(/\+\s*'\\n'\s*/, '')
+          .trim()}</p>
+      </div>
+    `.trim();
+    return [userFeedback, recruiterView];
   }
 
   private pushAiMessage(content: string) {
@@ -187,17 +225,4 @@ ${response.resumeSuggestions.map((s, i) => `  ${i + 1}. ${s}`).join('\n')}
     this.payload.resume = null;
     this.payload.jobText = null;
   }
-}
-export interface AnalyseResultResponseDto {
-  classification: string;
-  strongPoints: string[];
-  pointsToImprove: PointToImprove[];
-  resumeSuggestions: string[];
-  matchScore: string;
-  createdAt: string;
-}
-
-export interface PointToImprove {
-  description: string;
-  studyRecommendation: string;
 }

@@ -9,7 +9,7 @@ import {
 import { ToastrService } from 'ngx-toastr';
 import { FileIconComponent } from '../file-icon/file-icon.component';
 import { CommonModule } from '@angular/common';
-import { FileData } from '../../chat/chat.component';
+import { FileData } from '../../chat/chat.model';
 @Component({
   standalone: true,
   selector: 'app-file-upload-button',
