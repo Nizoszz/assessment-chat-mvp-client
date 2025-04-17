@@ -9,8 +9,8 @@ O MVP Assessment tem como objetivo validar a ideia de uma plataforma inteligente
 - Interface amigável para visualização e envio dos dados
 
 ## 🔗 Repositórios
-- **Frontend**: [https://github.com/seu-usuario/assessment-frontend](https://github.com/Nizoszz/assessment-chat-mvp-client/)
-- **Backend**: [https://github.com/seu-usuario/assessment-backend](https://github.com/Nizoszz/assessment-mvp)
+- **Frontend**: [https://github.com/Nizoszz/assessment-frontend](https://github.com/Nizoszz/assessment-chat-mvp-client/)
+- **Backend**: [https://github.com/Nizoszz/assessment-backend](https://github.com/Nizoszz/assessment-mvp)
 
 ## 🧩 Arquitetura Geral
 
